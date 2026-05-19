@@ -1,0 +1,29 @@
+# Dependencias
+node_modules
+dist
+
+# Variables de entorno
+.env
+
+# Logs
+*.log
+
+# Archivos de documentación/contexto (no son código)
+*.pdf
+*.docx
+PLAN.md
+INFORME_TRAZABILIDAD.md
+INFORME_TRAZABILIDAD.docx
+GUIA_DESPLIEGUE.md
+ERS_*.txt
+ERS_*.json
+extract_tables.py
+test-boleta.pdf
+start-server.ps1
+generate_docx.py
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo

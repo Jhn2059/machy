@@ -1,0 +1,70 @@
+services:
+  machy-db:
+    image: postgres:16
+    container_name: machy-db
+    environment:
+      POSTGRES_DB: machy_db
+      POSTGRES_USER: machy
+      POSTGRES_PASSWORD: machy_dev
+    ports:
+      - "5432:5432"
+    volumes:
+      - machy_pgdata:/var/lib/postgresql/data
+    networks:
+      - machy_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U machy -d machy_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  machy-api:
+    build:
+      context: .
+      dockerfile: packages/backend/Dockerfile
+    image: machy-api
+    container_name: machy-api
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://machy:machy_dev@machy-db:5432/machy_db
+      JWT_SECRET: machy_jwt_dev_secret
+      PORT: "3000"
+      NODE_ENV: development
+      CORS_ORIGIN: http://localhost:5173
+      SMTP_HOST: smtp.ethereal.email
+      SMTP_PORT: "587"
+    depends_on:
+      machy-db:
+        condition: service_healthy
+    volumes:
+      - ./packages/backend/src:/app/packages/backend/src
+      - ./packages/backend/prisma:/app/packages/backend/prisma
+      - ./packages/backend/entrypoint.sh:/app/packages/backend/entrypoint.sh
+    networks:
+      - machy_network
+    entrypoint: ["sh", "entrypoint.sh"]
+
+  machy-web:
+    build:
+      context: .
+      dockerfile: packages/frontend/Dockerfile
+    image: machy-web
+    container_name: machy-web
+    ports:
+      - "5173:5173"
+    environment:
+      VITE_API_URL: http://localhost:3000/api
+    depends_on:
+      - machy-api
+    volumes:
+      - ./packages/frontend/src:/app/packages/frontend/src
+    networks:
+      - machy_network
+
+volumes:
+  machy_pgdata:
+
+networks:
+  machy_network:
+    driver: bridge
