@@ -17,7 +17,8 @@ RUN npx prisma generate
 RUN npm run build
 
 ENV NODE_ENV=production
+ENV PORT=10000
 
 EXPOSE 10000
 
-CMD npx prisma migrate deploy && node dist/server.js
+CMD ["sh", "-c", "npx prisma migrate deploy && node dist/server.js"]
