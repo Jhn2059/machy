@@ -1,6 +1,7 @@
 #!/bin/sh
-echo "[machy] DATABASE_URL=$DATABASE_URL"
-echo "[machy] Starting..."
+echo "[machy] Starting deployment..."
 cd packages/backend
 npx prisma migrate deploy
+npx prisma db seed
+echo "[machy] Seed completed. Starting server..."
 exec node dist/server.js
