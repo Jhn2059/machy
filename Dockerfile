@@ -16,6 +16,8 @@ WORKDIR /app/packages/backend
 RUN npx prisma generate
 RUN npm run build
 
+ENV NODE_ENV=production
+
 EXPOSE 10000
 
 CMD npx prisma migrate deploy && node dist/server.js
